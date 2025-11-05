@@ -121,7 +121,7 @@ async def generate_meal_plan(
         ])
         
         response = await client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",  # Using 3.5-turbo for cost optimization
             messages=[
                 {
                     "role": "system",

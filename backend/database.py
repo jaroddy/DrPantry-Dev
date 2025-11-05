@@ -1,9 +1,10 @@
+import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, JSON, Boolean, Float, Text
 from datetime import datetime
 
-DATABASE_URL = "sqlite+aiosqlite:///./pantry_manager.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./pantry_manager.db")
 
 engine = create_async_engine(
     DATABASE_URL,

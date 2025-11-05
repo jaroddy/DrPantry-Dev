@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -10,7 +11,10 @@ from sqlalchemy import select
 from database import User, get_db
 
 # Security configuration
-SECRET_KEY = "your-secret-key-change-in-production"  # In production, use environment variable
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    print("WARNING: SECRET_KEY not set in environment. Using default (INSECURE for production!)")
+    SECRET_KEY = "dev-secret-key-change-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
