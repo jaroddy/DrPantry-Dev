@@ -5,7 +5,7 @@ from typing import Optional, List, Dict, Any
 # User models
 class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=100)
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=8)
 
 class UserLogin(BaseModel):
     username: str
@@ -32,8 +32,8 @@ class PantryItemBase(BaseModel):
     perishable: bool = True
     type: Optional[str] = None
     units: Optional[str] = None
-    volume: Optional[float] = None
-    calories: Optional[float] = None
+    volume: Optional[float] = Field(None, gt=0)
+    calories: Optional[float] = Field(None, ge=0)
     upc: Optional[str] = None
 
 class PantryItemCreate(PantryItemBase):
@@ -47,8 +47,8 @@ class PantryItemUpdate(BaseModel):
     perishable: Optional[bool] = None
     type: Optional[str] = None
     units: Optional[str] = None
-    volume: Optional[float] = None
-    calories: Optional[float] = None
+    volume: Optional[float] = Field(None, gt=0)
+    calories: Optional[float] = Field(None, ge=0)
     upc: Optional[str] = None
 
 class PantryItemResponse(PantryItemBase):

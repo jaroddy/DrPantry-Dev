@@ -20,8 +20,8 @@ function Register({ onSuccess, onToggle }) {
     }
 
     // Validate password length
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
       return;
     }
 
@@ -67,7 +67,7 @@ function Register({ onSuccess, onToggle }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength={6}
+            minLength={8}
           />
         </div>
         <div className="form-group">
@@ -77,7 +77,7 @@ function Register({ onSuccess, onToggle }) {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            minLength={6}
+            minLength={8}
           />
         </div>
         {error && <div className="error">{error}</div>}

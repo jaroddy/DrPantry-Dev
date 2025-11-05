@@ -57,7 +57,7 @@ function ChatBox({ pantryItems, onResponse }) {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -92,7 +92,7 @@ function ChatBox({ pantryItems, onResponse }) {
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
           placeholder="Ask me anything about meal planning..."
           rows={2}
           disabled={loading}

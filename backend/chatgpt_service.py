@@ -76,37 +76,6 @@ async def get_item_details(item_name: str) -> Dict[str, Any]:
             "calories_per_unit": 100
         }
 
-async def generate_sql_query(user_request: str, pantry_items: List[Dict[str, Any]]) -> str:
-    """Generate SQL query based on user's meal planning request"""
-    try:
-        client = get_client()
-        pantry_summary = "\n".join([
-            f"- {item['item_name']} ({item.get('type', 'unknown')}, {item.get('volume', '?')} {item.get('units', 'units')})"
-            for item in pantry_items[:20]  # Limit to avoid token limits
-        ])
-        
-        response = await client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": """You are a SQL expert. Generate SQLite SELECT queries for a pantry_items table.
-                    The table has columns: item_name, type, units, volume, calories, perishable, days_before_expiry.
-                    Return ONLY the SQL query, nothing else."""
-                },
-                {
-                    "role": "user",
-                    "content": f"User request: {user_request}\n\nAvailable items:\n{pantry_summary}\n\nGenerate a SQL query to find matching items."
-                }
-            ],
-            temperature=0.3,
-            max_tokens=200
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        print(f"Error generating SQL query: {e}")
-        return "SELECT * FROM pantry_items LIMIT 10"
-
 async def generate_meal_plan(
     user_guidelines: str,
     pantry_items: List[Dict[str, Any]],

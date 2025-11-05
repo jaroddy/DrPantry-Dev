@@ -155,7 +155,7 @@ async def update_global_knowledge(
             perishable=item_data.perishable,
             type=item_data.type,
             typical_units=item_data.units,
-            calories_per_unit=item_data.calories / item_data.volume if item_data.calories and item_data.volume else None
+            calories_per_unit=item_data.calories / item_data.volume if item_data.calories and item_data.volume and item_data.volume > 0 else None
         )
         db.add(db_knowledge)
         await db.commit()

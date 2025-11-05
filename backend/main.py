@@ -48,6 +48,10 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+    # Validate OpenAI API key is set
+    api_key = os.getenv("OPENAI_API_KEY", "")
+    if not api_key:
+        print("WARNING: OPENAI_API_KEY not set. ChatGPT features will not work.")
 
 @app.get("/")
 async def root():
@@ -56,6 +60,24 @@ async def root():
         "version": "1.0.0",
         "docs": "/docs"
     }
+
+@app.get("/health")
+async def health_check(db: AsyncSession = Depends(get_db)):
+    """Health check endpoint for monitoring"""
+    try:
+        # Test database connectivity
+        from sqlalchemy import text
+        await db.execute(text("SELECT 1"))
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "version": "1.0.0"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Database connection failed: {str(e)}"
+        )
 
 # Authentication endpoints
 @app.post("/api/auth/register", response_model=UserResponse, status_code=201)
@@ -314,9 +336,11 @@ async def chat(
         if meal_plan_data.get("meals"):
             # Save meal plan
             from models import Meal
+            from datetime import datetime
             meals = [Meal(**meal) for meal in meal_plan_data["meals"]]
+            plan_date = pantry_items[0].date_added.strftime('%Y-%m-%d') if pantry_items else datetime.utcnow().strftime('%Y-%m-%d')
             meal_plan_create = MealPlanCreate(
-                name=f"AI Generated Plan - {pantry_items[0].date_added.strftime('%Y-%m-%d') if pantry_items else 'Today'}",
+                name=f"AI Generated Plan - {plan_date}",
                 description=request.message,
                 meals=meals
             )

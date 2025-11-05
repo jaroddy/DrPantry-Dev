@@ -6,7 +6,7 @@ A modern web application that helps you manage your pantry inventory and create 
 
 ### 🔐 User Authentication
 - Secure login and account creation
-- Username and password authentication
+- Username (min 3 characters) and password (min 8 characters) authentication
 - JWT-based session management
 
 ### 📦 Pantry Management
