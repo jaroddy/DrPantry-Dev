@@ -1,14 +1,24 @@
 import os
 import json
 from typing import List, Dict, Any, Optional
-from openai import AsyncOpenAI
 
-# Initialize OpenAI client
-client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
+# Initialize OpenAI client (lazy loaded to avoid initialization errors)
+_client = None
+
+def get_client():
+    global _client
+    if _client is None:
+        from openai import AsyncOpenAI
+        api_key = os.getenv("OPENAI_API_KEY", "")
+        if not api_key:
+            print("Warning: OPENAI_API_KEY not set. ChatGPT features will not work.")
+        _client = AsyncOpenAI(api_key=api_key)
+    return _client
 
 async def normalize_item_name(receipt_name: str) -> str:
     """Convert receipt name to a normalized item name using GPT"""
     try:
+        client = get_client()
         response = await client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -32,6 +42,7 @@ async def normalize_item_name(receipt_name: str) -> str:
 async def get_item_details(item_name: str) -> Dict[str, Any]:
     """Get detailed information about a food item using GPT"""
     try:
+        client = get_client()
         response = await client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -68,6 +79,7 @@ async def get_item_details(item_name: str) -> Dict[str, Any]:
 async def generate_sql_query(user_request: str, pantry_items: List[Dict[str, Any]]) -> str:
     """Generate SQL query based on user's meal planning request"""
     try:
+        client = get_client()
         pantry_summary = "\n".join([
             f"- {item['item_name']} ({item.get('type', 'unknown')}, {item.get('volume', '?')} {item.get('units', 'units')})"
             for item in pantry_items[:20]  # Limit to avoid token limits
@@ -102,6 +114,7 @@ async def generate_meal_plan(
 ) -> Dict[str, Any]:
     """Generate a meal plan based on user guidelines and available pantry items"""
     try:
+        client = get_client()
         pantry_summary = "\n".join([
             f"- {item['item_name']}: {item.get('volume', '1')} {item.get('units', 'unit(s)')}"
             for item in pantry_items[:30]
@@ -151,6 +164,7 @@ async def chat_with_assistant(
 ) -> str:
     """General chat interface for the assistant"""
     try:
+        client = get_client()
         messages = [
             {
                 "role": "system",
