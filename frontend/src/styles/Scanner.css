@@ -1,0 +1,99 @@
+.scanner-container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.scanner-box {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.scanner-box h3 {
+  color: #667eea;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.scanner-info {
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.scanner-actions {
+  margin-bottom: 20px;
+}
+
+.select-btn {
+  padding: 12px 24px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.select-btn:hover {
+  background: #45a049;
+}
+
+.preview-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.preview-container img {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.scanner-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.scan-btn-primary {
+  flex: 1;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.scan-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.scan-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  padding: 14px 28px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #d32f2f;
+}
