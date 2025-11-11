@@ -109,9 +109,14 @@ class MealPlanResponse(BaseModel):
         from_attributes = True
 
 # Chat models
+class ChatMessage(BaseModel):
+    role: str  # 'user' or 'assistant' or 'system'
+    content: str
+
 class ChatRequest(BaseModel):
     message: str
     context: Optional[Dict[str, Any]] = None
+    conversation_history: Optional[List[ChatMessage]] = None
 
 class ChatResponse(BaseModel):
     response: str

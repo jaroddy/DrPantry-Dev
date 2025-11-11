@@ -69,8 +69,12 @@ export const mealPlanAPI = {
 
 // Chat API
 export const chatAPI = {
-  sendMessage: (message, context = null) => 
-    api.post('/chat', { message, context })
+  sendMessage: (message, context = null, conversationHistory = null) => 
+    api.post('/chat', { 
+      message, 
+      context,
+      conversation_history: conversationHistory 
+    })
 };
 
 export default api;

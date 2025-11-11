@@ -25,7 +25,7 @@ from crud import (
 from ocr_service import extract_text_from_image, parse_receipt_items
 from chatgpt_service import (
     normalize_item_name, get_item_details, generate_meal_plan,
-    chat_with_assistant
+    chat_with_assistant, extract_last_assistant_message
 )
 
 app = FastAPI(
@@ -359,7 +359,19 @@ async def chat(
     if request.context:
         context.update(request.context)
     
-    response_text = await chat_with_assistant(request.message, context)
+    # Convert conversation history to dict format if provided
+    conversation_history_dict = None
+    if request.conversation_history:
+        conversation_history_dict = [
+            {"role": msg.role, "content": msg.content}
+            for msg in request.conversation_history
+        ]
+    
+    response_text = await chat_with_assistant(
+        request.message, 
+        context,
+        conversation_history_dict
+    )
     return ChatResponse(response=response_text)
 
 if __name__ == "__main__":

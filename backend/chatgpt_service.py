@@ -129,7 +129,8 @@ Generate a {num_days}-day meal plan."""
 
 async def chat_with_assistant(
     message: str,
-    context: Optional[Dict[str, Any]] = None
+    context: Optional[Dict[str, Any]] = None,
+    conversation_history: Optional[List[Dict[str, str]]] = None
 ) -> str:
     """General chat interface for the assistant"""
     try:
@@ -149,6 +150,16 @@ async def chat_with_assistant(
                 "content": f"Context: {json.dumps(context)}"
             })
         
+        # Add conversation history if provided (excluding the current message)
+        if conversation_history:
+            for msg in conversation_history:
+                if msg.get("role") in ["user", "assistant"]:
+                    messages.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
+        
+        # Add current user message
         messages.append({
             "role": "user",
             "content": message
@@ -164,3 +175,19 @@ async def chat_with_assistant(
     except Exception as e:
         print(f"Error in chat: {e}")
         return "I'm sorry, I encountered an error. Please try again."
+
+def extract_last_assistant_message(conversation_history: List[Dict[str, str]]) -> Optional[str]:
+    """
+    Extract the last assistant message from conversation history.
+    This is useful when sending data to external services (e.g., Meshy)
+    where only the most recent AI response is needed, not the entire conversation.
+    """
+    if not conversation_history:
+        return None
+    
+    # Iterate backwards to find the last assistant message
+    for msg in reversed(conversation_history):
+        if msg.get("role") == "assistant":
+            return msg.get("content")
+    
+    return None

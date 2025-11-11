@@ -32,9 +32,17 @@ function ChatBox({ pantryItems, onResponse }) {
     setLoading(true);
 
     try {
-      const response = await chatAPI.sendMessage(userMessage, {
-        pantry_item_count: pantryItems.length
-      });
+      // Send conversation history (excluding the current user message which is sent separately)
+      // Only send messages after the initial greeting
+      const conversationHistory = messages.slice(1); // Skip initial assistant greeting
+      
+      const response = await chatAPI.sendMessage(
+        userMessage, 
+        {
+          pantry_item_count: pantryItems.length
+        },
+        conversationHistory
+      );
       
       // Add assistant response
       setMessages(prev => [...prev, {
