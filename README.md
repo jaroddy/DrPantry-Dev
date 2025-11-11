@@ -116,8 +116,8 @@ cp .env.example .env
 python main.py
 ```
 
-The API will be available at `http://localhost:8000`
-API documentation at `http://localhost:8000/docs`
+The API will be available at `http://localhost:8001`
+API documentation at `http://localhost:8001/docs`
 
 ### Frontend Setup
 
@@ -136,7 +136,7 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:3000`
+The app will be available at `http://localhost:3001`
 
 ## Usage
 
