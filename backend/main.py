@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from datetime import timedelta
+from pathlib import Path
 import uvicorn
 from dotenv import load_dotenv
 import logging
 import sys
+import os
 
 # Configure logging
 logging.basicConfig(
@@ -19,7 +21,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
-load_dotenv()
+# Try loading from parent directory first, then from backend directory
+# Try to load from project root
+root_env = Path(__file__).parent.parent / '.env'
+backend_env = Path(__file__).parent / '.env'
+
+if root_env.exists():
+    load_dotenv(root_env)
+    logger.info(f"Loaded environment variables from {root_env}")
+elif backend_env.exists():
+    load_dotenv(backend_env)
+    logger.info(f"Loaded environment variables from {backend_env}")
+else:
+    logger.warning("No .env file found in project root or backend directory")
 
 from database import init_db, get_db, User
 from models import (
