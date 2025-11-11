@@ -19,6 +19,44 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add error interceptor to log errors to backend
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // Log error to backend if we have a token (user is logged in)
+    const token = localStorage.getItem('token');
+    if (token && error.config && !error.config.url?.includes('/log/frontend-error')) {
+      try {
+        // Extract error details
+        const errorLog = {
+          error_message: error.message || 'Unknown error',
+          error_stack: error.stack || null,
+          url: window.location.href,
+          user_agent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+          additional_data: {
+            request_url: error.config.url,
+            request_method: error.config.method,
+            response_status: error.response?.status,
+            response_data: error.response?.data
+          }
+        };
+
+        // Send to backend (don't await to avoid blocking)
+        api.post('/log/frontend-error', errorLog).catch(() => {
+          // Silently fail if logging fails
+          console.warn('Failed to log error to backend');
+        });
+      } catch (loggingError) {
+        // Don't let logging errors break the app
+        console.warn('Error while logging to backend:', loggingError);
+      }
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 // Auth API
 export const authAPI = {
   register: (username, password) => 
