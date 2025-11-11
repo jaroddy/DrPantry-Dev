@@ -71,13 +71,21 @@ A modern web application that helps you manage your pantry inventory and create 
 
 ## Installation
 
+**New: [Pixi Setup](PIXI_SETUP.md)** - We now support Pixi for simplified dependency management! Check out the [Pixi Setup Guide](PIXI_SETUP.md) for a modern, hassle-free installation method that handles Python versions and dependencies automatically.
+
 ### Prerequisites
+
+**Option 1: Traditional Setup**
 - Python 3.9+
 - Node.js 16+
 - npm or yarn
 - Tesseract OCR installed on your system
 
-### Backend Setup
+**Option 2: Pixi Setup (Recommended)**
+- [Pixi](https://pixi.sh/) - Handles all dependencies automatically
+- See [PIXI_SETUP.md](PIXI_SETUP.md) for full instructions
+
+### Traditional Backend Setup
 
 1. Navigate to the backend directory:
 ```bash

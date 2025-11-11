@@ -2,6 +2,13 @@
 
 echo "🍽️ Pantry Manager Setup Script"
 echo "================================"
+echo ""
+echo "💡 TIP: Consider using Pixi for easier dependency management!"
+echo "   See PIXI_SETUP.md for instructions."
+echo "   With Pixi, you just run: pixi install && pixi run setup"
+echo ""
+echo "Continuing with traditional setup..."
+echo ""
 
 # Check if Python is installed
 if ! command -v python3 &> /dev/null; then
