@@ -4,6 +4,11 @@ This guide will help you get the Pantry Manager app up and running quickly.
 
 ## Prerequisites
 
+**Option 1: Pixi (Recommended - Handles everything automatically)**
+- [Pixi](https://pixi.sh/) installed
+- OpenAI API key for ChatGPT features
+
+**Option 2: Traditional Setup**
 - Python 3.9 or higher
 - Node.js 16 or higher
 - (Optional) Tesseract OCR for receipt scanning
@@ -11,13 +16,35 @@ This guide will help you get the Pantry Manager app up and running quickly.
 
 ## Installation
 
-### Option 1: Using the Setup Script (Linux/Mac)
+### Option 1: Using Pixi (Recommended)
+
+```bash
+# Install Pixi if you haven't already
+curl -fsSL https://pixi.sh/install.sh | bash
+
+# Clone and setup
+git clone https://github.com/jaroddy/DrPantry-Dev.git
+cd DrPantry-Dev
+pixi install
+
+# Create .env file
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY
+
+# Run the application
+pixi run backend   # In terminal 1
+pixi run frontend  # In terminal 2
+```
+
+See [PIXI_SETUP.md](PIXI_SETUP.md) for detailed Pixi documentation.
+
+### Option 2: Using the Setup Script (Linux/Mac)
 
 ```bash
 ./setup.sh
 ```
 
-### Option 2: Manual Setup
+### Option 3: Manual Setup
 
 #### Backend Setup
 
