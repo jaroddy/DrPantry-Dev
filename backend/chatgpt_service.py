@@ -10,8 +10,6 @@ def get_client():
     if _client is None:
         from openai import AsyncOpenAI
         api_key = os.getenv("OPENAI_API_KEY", "")
-        if not api_key:
-            print("Warning: OPENAI_API_KEY not set. ChatGPT features will not work.")
         _client = AsyncOpenAI(api_key=api_key)
     return _client
 
