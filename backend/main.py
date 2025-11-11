@@ -4,6 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from datetime import timedelta
 import uvicorn
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from database import init_db, get_db, User
 from models import (

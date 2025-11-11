@@ -103,9 +103,12 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables:
+4. Set up environment variables - Create a `.env` file in the project root:
 ```bash
-export OPENAI_API_KEY="your-openai-api-key"
+# Copy the example file
+cp .env.example .env
+# Edit .env and add your OpenAI API key:
+# OPENAI_API_KEY="your-openai-api-key-here"
 ```
 
 5. Run the backend server:
