@@ -102,7 +102,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 python main.py
 ```
 
-The backend API will start on `http://localhost:8000`
+The backend API will start on `http://localhost:8001`
 
 ### Terminal 2 - Frontend
 
@@ -111,11 +111,11 @@ cd frontend
 npm run dev
 ```
 
-The frontend will start on `http://localhost:3000`
+The frontend will start on `http://localhost:3001`
 
 ## First Steps
 
-1. Open your browser to `http://localhost:3000`
+1. Open your browser to `http://localhost:3001`
 2. Click "Register here" to create a new account
 3. Enter a username and password (password must be entered twice)
 4. You'll be automatically logged in
@@ -160,7 +160,7 @@ The following features require an API key:
 
 ## API Documentation
 
-Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation.
+Once the backend is running, visit `http://localhost:8001/docs` for interactive API documentation.
 
 ## Troubleshooting
 

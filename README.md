@@ -103,9 +103,12 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables:
+4. Set up environment variables - Create a `.env` file in the project root:
 ```bash
-export OPENAI_API_KEY="your-openai-api-key"
+# Copy the example file
+cp .env.example .env
+# Edit .env and add your OpenAI API key:
+# OPENAI_API_KEY="your-openai-api-key-here"
 ```
 
 5. Run the backend server:
@@ -113,8 +116,8 @@ export OPENAI_API_KEY="your-openai-api-key"
 python main.py
 ```
 
-The API will be available at `http://localhost:8000`
-API documentation at `http://localhost:8000/docs`
+The API will be available at `http://localhost:8001`
+API documentation at `http://localhost:8001/docs`
 
 ### Frontend Setup
 
@@ -133,7 +136,7 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:3000`
+The app will be available at `http://localhost:3001`
 
 ## Usage
 

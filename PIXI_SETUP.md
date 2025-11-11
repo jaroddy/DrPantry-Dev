@@ -92,8 +92,8 @@ Pixi tasks are defined in `pixi.toml`. Here are the available commands:
 - `pixi run install` - Install Python packages from requirements.txt
 - `pixi run install-frontend` - Install frontend npm dependencies
 - `pixi run setup` - Run both install commands above
-- `pixi run backend` - Start the FastAPI backend server (port 8000)
-- `pixi run frontend` - Start the React frontend dev server (port 3000)
+- `pixi run backend` - Start the FastAPI backend server (port 8001)
+- `pixi run frontend` - Start the React frontend dev server (port 3001)
 - `pixi run start` - Alternative command to start backend
 
 ## How It Works
@@ -171,8 +171,8 @@ echo "OPENAI_API_KEY=your-key-here" > .env
 ```
 
 ### Port already in use
-If port 8000 or 3000 is taken:
-- Backend: Edit `backend/main.py` to change the port
+If port 8001 or 3001 is taken:
+- Backend: Edit `backend/main.py` or set `BACKEND_PORT` in `.env` to change the port
 - Frontend: Edit `frontend/vite.config.js` to change the port
 
 ## Advanced Usage
