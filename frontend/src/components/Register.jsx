@@ -16,32 +16,45 @@ function Register({ onSuccess, onToggle }) {
     // Validate passwords match
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      console.error('Registration error: Passwords do not match');
       return;
     }
 
     // Validate password length
     if (password.length < 8) {
       setError('Password must be at least 8 characters');
+      console.error('Registration error: Password must be at least 8 characters');
       return;
     }
 
     setLoading(true);
 
     try {
+      console.log('Attempting to register user:', username);
       await authAPI.register(username, password);
+      console.log('Registration successful, attempting auto-login');
       
       // Auto-login after registration
       const loginResponse = await authAPI.login(username, password);
       const { access_token } = loginResponse.data;
+      console.log('Login successful, retrieving user info');
       
       // Set token in localStorage before calling getMe()
       localStorage.setItem('token', access_token);
       
       // Get user info
       const userResponse = await authAPI.getMe();
+      console.log('User info retrieved successfully');
       onSuccess(userResponse.data, access_token);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Registration failed');
+      const errorMessage = err.response?.data?.detail || 'Registration failed';
+      console.error('Registration error:', {
+        message: errorMessage,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data
+      });
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
