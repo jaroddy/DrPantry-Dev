@@ -34,6 +34,9 @@ function Register({ onSuccess, onToggle }) {
       const loginResponse = await authAPI.login(username, password);
       const { access_token } = loginResponse.data;
       
+      // Set token in localStorage before calling getMe()
+      localStorage.setItem('token', access_token);
+      
       // Get user info
       const userResponse = await authAPI.getMe();
       onSuccess(userResponse.data, access_token);

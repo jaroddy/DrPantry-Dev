@@ -116,3 +116,13 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     meal_plan: Optional[MealPlanResponse] = None
+
+# Frontend Error Logging models
+class FrontendErrorLog(BaseModel):
+    error_message: str
+    error_stack: Optional[str] = None
+    component: Optional[str] = None
+    url: Optional[str] = None
+    user_agent: Optional[str] = None
+    timestamp: Optional[str] = None
+    additional_data: Optional[Dict[str, Any]] = None

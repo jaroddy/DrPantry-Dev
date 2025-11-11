@@ -1,10 +1,22 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from datetime import timedelta
 import uvicorn
 from dotenv import load_dotenv
+import logging
+import sys
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,7 +27,7 @@ from models import (
     PantryItemCreate, PantryItemUpdate, PantryItemResponse,
     ReceiptScanRequest, ReceiptScanResponse,
     MealPlanCreate, MealPlanResponse,
-    ChatRequest, ChatResponse
+    ChatRequest, ChatResponse, FrontendErrorLog
 )
 from auth import (
     authenticate_user, create_access_token, get_current_user,
@@ -49,12 +61,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Catch and log all unhandled exceptions"""
+    logger.error(
+        f"Unhandled exception: {type(exc).__name__}: {str(exc)} | "
+        f"Path: {request.url.path} | "
+        f"Method: {request.method}",
+        exc_info=True
+    )
+    return {
+        "detail": "Internal server error",
+        "type": type(exc).__name__
+    }
+
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+    logger.info("Database initialized successfully")
     # Validate OpenAI API key is set
     api_key = os.getenv("OPENAI_API_KEY", "")
     if not api_key:
+        logger.warning("OPENAI_API_KEY not set. ChatGPT features will not work.")
         print("WARNING: OPENAI_API_KEY not set. ChatGPT features will not work.")
 
 @app.get("/")
@@ -87,25 +116,39 @@ async def health_check(db: AsyncSession = Depends(get_db)):
 @app.post("/api/auth/register", response_model=UserResponse, status_code=201)
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     """Register a new user"""
+    logger.info(f"Registration attempt for username: {user.username}")
+    
     # Check if username already exists
     from sqlalchemy import select
     result = await db.execute(
         select(User).where(User.username == user.username)
     )
     if result.scalar_one_or_none():
+        logger.warning(f"Registration failed - username already exists: {user.username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered"
         )
     
-    db_user = await create_user(db, user.username, user.password)
-    return db_user
+    try:
+        db_user = await create_user(db, user.username, user.password)
+        logger.info(f"User registered successfully: {db_user.username} (ID: {db_user.id})")
+        return db_user
+    except Exception as e:
+        logger.error(f"Error during user registration for {user.username}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Registration failed"
+        )
 
 @app.post("/api/auth/login", response_model=Token)
 async def login(user: UserLogin, db: AsyncSession = Depends(get_db)):
     """Login user and return access token"""
+    logger.info(f"Login attempt for username: {user.username}")
+    
     db_user = await authenticate_user(db, user.username, user.password)
     if not db_user:
+        logger.warning(f"Login failed for username: {user.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -116,6 +159,7 @@ async def login(user: UserLogin, db: AsyncSession = Depends(get_db)):
     access_token = create_access_token(
         data={"sub": db_user.username}, expires_delta=access_token_expires
     )
+    logger.info(f"Login successful for user: {db_user.username} (ID: {db_user.id})")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/api/auth/me", response_model=UserResponse)
@@ -365,6 +409,43 @@ async def chat(
     
     response_text = await chat_with_assistant(request.message, context)
     return ChatResponse(response=response_text)
+
+# Frontend error logging endpoint
+@app.post("/api/log/frontend-error", status_code=200)
+async def log_frontend_error(
+    error: FrontendErrorLog,
+    request: Request,
+    current_user: User = Depends(get_current_user)
+):
+    """Log frontend errors for debugging and monitoring"""
+    try:
+        # Extract client info
+        client_host = request.client.host if request.client else "unknown"
+        
+        # Log the error with full details
+        logger.error(
+            f"FRONTEND ERROR - User: {current_user.username} (ID: {current_user.id}) | "
+            f"Client: {client_host} | "
+            f"Component: {error.component or 'N/A'} | "
+            f"URL: {error.url or 'N/A'} | "
+            f"Message: {error.error_message} | "
+            f"User-Agent: {error.user_agent or 'N/A'} | "
+            f"Timestamp: {error.timestamp or 'N/A'}"
+        )
+        
+        # Log stack trace if available
+        if error.error_stack:
+            logger.error(f"Stack trace: {error.error_stack}")
+        
+        # Log additional data if available
+        if error.additional_data:
+            logger.error(f"Additional data: {error.additional_data}")
+        
+        return {"status": "logged", "message": "Error logged successfully"}
+    except Exception as e:
+        logger.error(f"Failed to log frontend error: {str(e)}")
+        # Don't raise exception - we don't want logging failures to break the app
+        return {"status": "error", "message": "Failed to log error"}
 
 if __name__ == "__main__":
     import os
