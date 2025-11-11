@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from datetime import timedelta
@@ -85,10 +86,13 @@ async def global_exception_handler(request: Request, exc: Exception):
         f"Method: {request.method}",
         exc_info=True
     )
-    return {
-        "detail": "Internal server error",
-        "type": type(exc).__name__
-    }
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "detail": "Internal server error",
+            "type": type(exc).__name__
+        }
+    )
 
 @app.on_event("startup")
 async def startup_event():

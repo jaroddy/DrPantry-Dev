@@ -14,14 +14,24 @@ function Login({ onSuccess, onToggle }) {
     setLoading(true);
 
     try {
+      console.log('Attempting to login user:', username);
       const response = await authAPI.login(username, password);
       const { access_token } = response.data;
+      console.log('Login successful, retrieving user info');
       
       // Get user info
       const userResponse = await authAPI.getMe();
+      console.log('User info retrieved successfully');
       onSuccess(userResponse.data, access_token);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed');
+      const errorMessage = err.response?.data?.detail || 'Login failed';
+      console.error('Login error:', {
+        message: errorMessage,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data
+      });
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
